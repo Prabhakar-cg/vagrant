@@ -1,13 +1,16 @@
 module "ec2_cluster" {
-  source                 = "https://github.com/terraform-aws-modules/terraform-aws-ec2-instance"
+  source                 = "terraform-aws-modules/ec2-instance/aws"
+  version                = "~> 2.0"
+
   name                   = "my-cluster"
   instance_count         = 5
+
   ami                    = "ami-ebd02392"
   instance_type          = "t2.micro"
   key_name               = "user1"
   monitoring             = true
-  vpc_security_group_ids = ["abcd123"]
-  subnet_id              = "abcd1234"
+  vpc_security_group_ids = ["sg-12345678"]
+  subnet_id              = "subnet-eddcdzz4"
 
   tags = {
     Terraform   = "true"
