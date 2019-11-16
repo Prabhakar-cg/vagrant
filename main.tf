@@ -1,19 +1,13 @@
-module "ec2_cluster" {
-  source                 = "terraform-aws-modules/ec2-instance/aws"
-  version                = "~> 2.0"
-
-  name                   = "my-cluster"
-  instance_count         = 5
-
-  ami                    = "ami-ebd02392"
-  instance_type          = "t2.micro"
-  key_name               = "user1"
-  monitoring             = true
-  vpc_security_group_ids = ["sg-12345678"]
-  subnet_id              = "subnet-eddcdzz4"
-
-  tags = {
-    Terraform   = "true"
-    Environment = "dev"
-  }
+resource "aws_instance" "temenos" {
+  count                                = "1"
+  ami                                  = "ami-23452"
+  key_name                             = "test"
+  subnet_id                            = "test"
+  instance_type                        = "test"
+  security_groups                      = ["test"]
+  availability_zone                    = "test"
+                                     
+  tags {                                  
+  OS                                   = "test"
+   }
 }
