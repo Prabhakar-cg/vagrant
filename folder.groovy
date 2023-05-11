@@ -14,3 +14,9 @@ folder('artemis/firstquarter') {
 folder('artemis/waxinggibbous') {
     displayName('Waxing Gibbous')
 }
+
+folder('Artemis') {
+    authorization {
+        permission('hudson.model.Item.Create:authenticated')
+    }
+}
