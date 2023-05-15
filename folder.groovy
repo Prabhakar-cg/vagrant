@@ -18,5 +18,9 @@ folder('artemis/waxinggibbous') {
 folder('Artemis') {
     authorization {
         permission('hudson.model.Item.Create:authenticated')
+        permission('voyager', [
+                'hudson.model.Item.Create',
+                'hudson.model.Item.Discover'
+                ])
     }
 }
