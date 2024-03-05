@@ -41,8 +41,8 @@ jenkins:
       allowsSignup: false
       enableCaptcha: false
       users:
-      - id: "prabha"
-        name: "prabha"
+      - id: "jcasc"
+        name: "jcasc"
         properties:
         - "consoleUrlProvider"
         - "myView"
@@ -52,7 +52,7 @@ jenkins:
         - "timezone"
         - "experimentalFlags"
         - mailer:
-            emailAddress: "admin@prabha.com"
+            emailAddress: "admin@jcasc.com"
         - "apiToken"
   slaveAgentPort: -1
   updateCenter:
