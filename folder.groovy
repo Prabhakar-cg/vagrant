@@ -27,7 +27,7 @@ folder('example-3') {
 // gives the hudson.model.Item.Discover and hudson.model.Item.Create permission to jill
 folder('example-4') {
     authorization {
-        permissions('jill', [
+        permissions('paaru', [
             'hudson.model.Item.Create',
             'hudson.model.Item.Discover'
         ])
