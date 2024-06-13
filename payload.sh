@@ -5,4 +5,4 @@ sudo groupadd docker
 sudo usermod -aGdocker vagrant
 newgrp docker
 systemctl enable docker;systemctl start docker
-pip install --upgrade pip wheel
+# pip install --upgrade pip wheel

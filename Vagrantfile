@@ -1,9 +1,9 @@
 Vagrant.require_version ">= 2.4.1"
 image      =  "generic/centos8"
-cpus       =  "1"
-memory     =  "1024"
+cpus       =  "2"
+memory     =  "5000"
 gui        =  false
-count      =  1
+count      =  2
 
 Vagrant.configure("2") do |multi|
   multi.vm.provision "shell", path: "generic.sh"
@@ -15,10 +15,10 @@ Vagrant.configure("2") do |multi|
   
   (1..count).each do |i|
     private_ip = "192.168.56.1#{i}"
-    host_name  =  "vault#{i}.vbox"
-    guest_name =  "vault_ha#{i}"
+    host_name  =  "cicd#{i}.vbox"
+    guest_name =  "cicd#{i}"
 
-    multi.vm.define "vault_#{i}" do | multi_node |
+    multi.vm.define "cicd_#{i}" do | multi_node |
       multi_node.vm.box      = image
       multi_node.vm.hostname = host_name
       multi_node.vm.network "private_network", ip: private_ip, hostname: true
