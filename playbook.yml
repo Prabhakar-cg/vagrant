@@ -1,8 +1,41 @@
----
 - hosts: all
+  become: true
+
+  vars:
+    vault_version: 1.12.0
+    vault_download_url: "https://releases.hashicorp.com/vault/{{ vault_version }}/vault_{{ vault_version }}_linux_amd64.zip"
+    vault_config_dir: /etc/vault
+    vault_data_dir: /var/lib/vault
+    vault_log_dir: /var/log/vault
+    vault_user: vault
+    vault_group: vault
 
   tasks:
-  - name: Install the latest version of Apache
-    ansible.builtin.yum:
-      name: httpd
-      state: latest
+    - name: Install required packages
+      yum:
+        name:
+          - unzip
+          - systemd
+        state: present
+
+    - name: Create vault user and group
+      group:
+        name: "{{ vault_group }}"
+        state: present
+      user:
+        name: "{{ vault_user }}"
+        group: "{{ vault_group }}"
+        shell: /sbin/nologin
+        create_home: false
+        state: present
+
+    - name: Download Vault
+      get_url:
+        url: "{{ vault_download_url }}"
+        dest: /tmp/vault.zip
+        mode: '0644'
+
+    - name: Extract Vault
+      unarchive:
+        src: /tmp/vault.zip
+        dest: /usr/local/bin

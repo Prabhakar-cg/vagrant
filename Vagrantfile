@@ -7,11 +7,11 @@ count      =  2
 
 Vagrant.configure("2") do |multi|
   multi.vm.provision "shell", path: "generic.sh"
-  # multi.vm.provision "ansible" do |ansible|  ##this code assumes that your vagrant host is installed with ansible
-  #   ansible.playbook = "playbook.yml"
-  #   compatibility_mode = "2.0"
-  #   ansible.verbose = true
-  # end
+  multi.vm.provision "ansible" do |ansible|  ##this code assumes that your vagrant host is installed with ansible
+    ansible.playbook = "playbook.yml"
+    compatibility_mode = "2.0"
+    ansible.verbose = true
+  end
   
   (1..count).each do |i|
     private_ip = "192.168.56.1#{i}"
