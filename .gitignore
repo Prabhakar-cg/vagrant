@@ -1,1 +1,8 @@
 .vagrant
+*.retry
+*/__pycache__
+*.pyc
+.cache
+*.swp
+*.yamllint
+*.ansible-lint

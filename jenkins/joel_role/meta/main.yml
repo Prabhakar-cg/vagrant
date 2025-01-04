@@ -1,0 +1,19 @@
+---
+dependencies: []
+
+galaxy_info:
+  role_name: jenkins
+  author: roughrider
+  description: Jenkins CI
+  company: "90's coder"
+  license: "No license"
+  min_ansible_version: 2.10
+  platforms:
+    - name: EL
+      versions:
+        - all
+  galaxy_tags:
+    - development
+    - packaging
+    - jenkins
+    - ci

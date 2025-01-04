@@ -1,0 +1,50 @@
+---
+- name: Stop and disable firewalld
+  ansible.builtin.systemd:
+    name: firewalld
+    state: stopped
+    enabled: false
+
+- name: Add jenkins yum repository
+  ansible.builtin.yum_repository:
+    name: jenkins
+    description: Jenkins
+    baseurl: http://pkg.jenkins.io/redhat-stable
+    gpgcheck: true
+    gpgkey: https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+    state: present
+
+- name: Yum install
+  ansible.builtin.dnf:
+    name:
+      - java-21-openjdk
+      - fontconfig
+      - jenkins
+    state: present
+  notify:
+    - Start Jenkins service
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
+
+- name: Create custom init scripts directory.
+  ansible.builtin.file:
+    path: "{{ jenkins_home }}/init.groovy.d"
+    state: directory
+    owner: "{{ jenkins_process_user }}"
+    group: "{{ jenkins_process_group }}"
+    mode: "0775"
+
+- name: configure default users
+  ansible.builtin.template:
+    src: basic-security.groovy.j2
+    dest: "{{ jenkins_home }}/init.groovy.d/basic-security.groovy"
+    owner: "{{ jenkins_process_user }}"
+    group: "{{ jenkins_process_group }}"
+    mode: "0775"
+  register: jenkins_users_config
+  notify:
+    - Start Jenkins service
+
+- name: Flush handlers  again
+  ansible.builtin.meta: flush_handlers
