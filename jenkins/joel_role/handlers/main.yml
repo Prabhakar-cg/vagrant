@@ -1,7 +1,8 @@
 ---
-- name: Start Jenkins service
+- name: Retart Jenkins service
   service:
     name: jenkins
     state: restarted
+    daemon_reload: true
     enabled: yes
 

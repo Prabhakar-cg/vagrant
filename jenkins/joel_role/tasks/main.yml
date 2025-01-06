@@ -3,14 +3,14 @@
   ansible.builtin.systemd:
     name: firewalld
     state: stopped
-    enabled: false
+    enabled: False
 
 - name: Add jenkins yum repository
   ansible.builtin.yum_repository:
     name: jenkins
     description: Jenkins
     baseurl: http://pkg.jenkins.io/redhat-stable
-    gpgcheck: true
+    gpgcheck: True
     gpgkey: https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
     state: present
 
@@ -21,11 +21,16 @@
       - fontconfig
       - jenkins
     state: present
-  notify:
-    - Start Jenkins service
 
-- name: Flush handlers
-  ansible.builtin.meta: flush_handlers
+- name: Modify variables in init file.
+  lineinfile:
+    dest: "{{ jenkins_init_file }}"
+    insertafter: '^Environment="{{ item.option }}='
+    regexp: '^Environment="{{ item.option }} '
+    line: 'Environment="{{ item.option }}={{ item.value }}"'
+    state: present
+    mode: 0644
+  with_items: "{{ jenkins_init_changes }}"
 
 - name: Create custom init scripts directory.
   ansible.builtin.file:
@@ -42,9 +47,11 @@
     owner: "{{ jenkins_process_user }}"
     group: "{{ jenkins_process_group }}"
     mode: "0775"
-  register: jenkins_users_config
   notify:
-    - Start Jenkins service
+    -  Retart Jenkins service
 
 - name: Flush handlers  again
   ansible.builtin.meta: flush_handlers
+
+# Update Jenkins and install configured plugins.
+- include_tasks: plugins.yml
