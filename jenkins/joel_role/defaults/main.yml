@@ -17,7 +17,7 @@ jenkins_http_port: 8080
 jenkins_jar_location: /opt/jenkins-cli.jar
 jenkins_url_prefix: ""
 jenkins_options: ""
-jenkins_java_options: "-Djenkins.install.runSetupWizard=false"
+jenkins_java_options: "-Djenkins.install.runSetupWizard=false -Xmx3500m -Xms1536m"
 
 # Plugin list can use the plugin name, or a name/version dict.
 jenkins_plugins: 

@@ -29,7 +29,7 @@ The Jenkins home directory which, amongst others, is being used for storing arti
 The HTTP port for Jenkins' web interface.
 
     jenkins_admin_username: admin
-    jenkins_admin_password: admin
+    jenkins_admin_password: We@devops
 
 Default admin account credentials which will be created the first time Jenkins is installed.
 
@@ -144,8 +144,7 @@ None.
       - openjdk-8-jdk
 
   roles:
-    - role: geerlingguy.java
-    - role: geerlingguy.jenkins
+    - role: joel_role
 ```
 
 Note that `java_packages` may need different versions depending on your distro (e.g. `openjdk-11-jdk` for Debian 10, or `java-1.8.0-openjdk` for RHEL 7 or 8).
