@@ -1,0 +1,68 @@
+Vagrant.configure("2") do |config|
+  # Box built locally by box-create.sh (FCOS no longer ships a VirtualBox Vagrant box).
+  # Run ./box-create.sh once before the first `vagrant up`.
+  config.vm.box = "fedora/coreos-stable"
+
+  config.vm.hostname = "fcos"
+  config.vm.boot_timeout = 600   # FCOS first-boot Ignition run takes ~3-5 min
+  config.ssh.connect_timeout = 60
+  config.ssh.max_tries = 40
+
+  # CoreOS uses 'core' as the default SSH user.
+  # insert_key=false: box-create.sh pre-installs the Vagrant insecure key via
+  # Ignition; FCOS's immutable-ish environment makes runtime key replacement
+  # unreliable, so we keep using the insecure key (acceptable for a local dev VM).
+  config.ssh.username   = "core"
+  config.ssh.insert_key = false
+
+  # VirtualBox cannot access the WSL Linux filesystem (ext4).
+  # Disable the default /vagrant synced folder; scripts are uploaded via SCP.
+  config.vm.synced_folder ".", "/vagrant", disabled: true
+
+  # Static IP avoids conflict with any existing host-only DHCP adapter.
+  config.vm.network "private_network", ip: "192.168.56.10"
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.name   = "fcos"
+    vb.memory = 16384   # OKD SNO minimum: 16 GB
+    vb.cpus   = 8       # OKD SNO minimum: 8 vCPUs
+    vb.gui    = true    # temporarily on — turn off once SSH confirmed working
+
+    # FCOS requires UEFI; the box OVF already sets EFI64 but override here
+    # for safety in case VirtualBox resets it on import.
+    vb.customize ["modifyvm", :id, "--firmware", "efi64"]
+
+    # OKD SNO minimum: 120 GB secondary disk.
+    # Path must be Windows-absolute because VBoxManage.exe runs on the Windows host.
+    okd_disk = "C:/Users/iam_p/.vagrant.d/fcos-okd-disk.vmdk"
+    unless File.exist?("/mnt/c/Users/iam_p/.vagrant.d/fcos-okd-disk.vmdk")
+      vb.customize ["createmedium", "disk",
+                    "--filename", okd_disk,
+                    "--size",     122880,
+                    "--format",   "VMDK"]
+    end
+    vb.customize ["storageattach", :id,
+                  "--storagectl", "SATA",
+                  "--port",       1,
+                  "--device",     0,
+                  "--type",       "hdd",
+                  "--medium",     okd_disk]
+  end
+
+  # 1. Enable password auth / reload sshd
+  config.vm.provision "shell", path: "generic.sh"
+
+  # 2. Deploy OKD Single-Node (SNO) — only runs when okd-install.sh exists.
+  #    Create okd-install.sh to enable this step.
+  #    Override defaults via env vars, e.g.:
+  #      OKD_VERSION=4.15.0-0.okd-... BASE_DOMAIN=okd.local vagrant provision
+  if File.exist?(File.join(__dir__, "okd-install.sh"))
+    config.vm.provision "shell",
+      path: "okd-install.sh",
+      env: {
+        "OKD_VERSION"  => ENV.fetch("OKD_VERSION",  "4.15.0-0.okd-2024-03-10-010116"),
+        "BASE_DOMAIN"  => ENV.fetch("BASE_DOMAIN",  "okd.local"),
+        "CLUSTER_NAME" => ENV.fetch("CLUSTER_NAME", "sno")
+      }
+  end
+end
